@@ -20,7 +20,9 @@ def main():
         print(i)
     with zipfile.ZipFile('archive.zip', mode='w',
                          compression=zipfile.ZIP_DEFLATED) as zf:
-        pass
+        for fil in files:
+            zf.write(fil)
+
 
 if __name__ == '__main__':
     main()
