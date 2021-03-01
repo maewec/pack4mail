@@ -12,16 +12,22 @@ def tree(path):
             p.append(new_path)
     return p
 
+def pack(list_files):
+    with zipfile.ZipFile('archive.zip', mode='w',
+                         compression=zipfile.ZIP_DEFLATED) as zf:
+        for fil in list_files:
+            zf.write(fil, arcname=fil+'_')
+    return 0
+
+
 def main():
     os.chdir(path)
     files = tree('.')
     print('List of files:')
     for i in files:
         print(i)
-    with zipfile.ZipFile('archive.zip', mode='w',
-                         compression=zipfile.ZIP_DEFLATED) as zf:
-        for fil in files:
-            zf.write(fil)
+    pack(list_files)
+
 
 
 if __name__ == '__main__':
