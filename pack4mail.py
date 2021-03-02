@@ -1,4 +1,5 @@
 import zipfile, os, glob
+import sys
 
 
 def tree(path):
@@ -24,6 +25,8 @@ def unpack(archive):
         for file in zf.infolist():
             file = file.filename
             zf.extract(file, name_dir)
+            os.rename(os.path.join(name_dir, file),
+                      os.path.join(name_dir, old_name(file)))
 
 
 def new_name(name):
