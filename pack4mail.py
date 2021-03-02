@@ -18,6 +18,14 @@ def pack(list_files, name='archive'):
             zf.write(fil, arcname=new_name(fil))
     return 0
 
+def unpack(archive):
+    name_dir = os.path.splitext(os.path.split(archive)[-1])[0]
+    with zipfile.ZipFile(archive) as zf:
+        for file in zf.infolist():
+            file = file.filename
+            zf.extract(file, name_dir)
+
+
 def new_name(name):
     return name + '_'
 
@@ -34,12 +42,12 @@ def main():
     print('List of files:')
     for i in files:
         print(i)
+
     print('Имя архива', name_archive)
+#    pack(files, name=name_archive)
 
-    pack(files, name=name_archive)
-
-
-
+    name_archive += '.zip'
+    unpack(name_archive)
 
 if __name__ == '__main__':
     main()
