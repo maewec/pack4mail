@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 import zipfile, os, glob
 import sys
 
@@ -39,13 +40,12 @@ def main():
     if len(sys.argv) == 1:
         path = '.'
         flag = 'pack'
-    elif os.path.isfile(sys.argv[1]):
+    elif os.path.isdir(sys.argv[1]):
         path = sys.argv[1]
         flag = 'pack'
-    elif os.path.isdir(sys.argv[1]):
-        name_archive = sys.argv[1]
-        path = os.path.split()[0]
-        flag = unpack
+    elif os.path.isfile(sys.argv[1]):
+        path, name_archive = os.path.split(sys.argv[1])
+        flag = 'unpack'
 
     path = os.path.abspath(path)
     os.chdir(path)
