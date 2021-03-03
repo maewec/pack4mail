@@ -1,8 +1,10 @@
 #!/usr/bin/python3
-import zipfile, os, glob
+import zipfile, os
 import sys
+import time
 
 def tree(path):
+    """Рекурсивный обход директорий и создание списка со всеми файлами"""
     p = []
     for i in os.listdir(path):
         new_path = os.path.join(path, i)
@@ -13,6 +15,7 @@ def tree(path):
     return p
 
 def pack(list_files, name='archive'):
+    """Запаковка"""
     with zipfile.ZipFile(name+'.zip', mode='w',
                          compression=zipfile.ZIP_DEFLATED) as zf:
         for fil in list_files:
@@ -20,13 +23,21 @@ def pack(list_files, name='archive'):
     return 0
 
 def unpack(archive):
+    """Распаковка"""
+    # выделяем имя зипфайла без расширения
     name_dir = os.path.splitext(os.path.split(archive)[-1])[0]
     with zipfile.ZipFile(archive) as zf:
         for file in zf.infolist():
-            file = file.filename
+            file_name = file.filename
+            file_time = file.date_time
             zf.extract(file, name_dir)
-            os.rename(os.path.join(name_dir, file),
-                      os.path.join(name_dir, old_name(file)))
+            os.rename(os.path.join(name_dir, file_name),
+                      os.path.join(name_dir, old_name(file_name)))
+            # преобразуем время файла из архива в числовой вид
+            file_time = time.mktime(file_time + (0, 0, -1))
+            # переписываем время создания на то, что было в зипе
+            os.utime(os.path.join(name_dir, old_name(file_name)),
+                    (file_time, file_time))
 
 
 def new_name(name):
@@ -56,10 +67,11 @@ def main():
         print('List of files:')
         for i in files:
             print(i)
-        print('Name archive:', name_archive)
+        print('Create archive:', os.path.join(os.getcwd(), name_archive+'.zip'))
         pack(files, name=name_archive)
     elif flag == 'unpack':
         unpack(name_archive)
+        print('Unpack archive to:\n', os.path.join(os.getcwd(), name_archive[:-4]))
 
 
 if __name__ == '__main__':
