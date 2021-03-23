@@ -27,12 +27,15 @@ def unpack(archive):
     # выделяем имя зипфайла без расширения
     name_dir = os.path.splitext(os.path.split(archive)[-1])[0]
     with zipfile.ZipFile(archive) as zf:
-        for file in zf.infolist():
-            file_name = file.filename
-            file_time = file.date_time
-            zf.extract(file, name_dir)
-            os.rename(os.path.join(name_dir, file_name),
-                      os.path.join(name_dir, old_name(file_name)))
+        for fil in zf.infolist():
+            file_name = fil.filename
+            file_time = fil.date_time
+            full_path = os.path.join(name_dir, file_name)
+            full_path_old = os.path.join(name_dir, old_name(file_name))
+            if os.path.exists(full_path_old):
+                os.remove(full_path_old)
+            zf.extract(fil, name_dir)
+            os.rename(full_path, full_path_old)
             # преобразуем время файла из архива в числовой вид
             file_time = time.mktime(file_time + (0, 0, -1))
             # переписываем время создания на то, что было в зипе
